@@ -29,7 +29,7 @@ Usage
 
 References
 ==========
-  Qing Cheng, Lin Chen<sup>+</sup>, Jin Liu<sup>+</sup>. (2021) Mendelian randomization informs shared genetic
+  Qing Cheng, Xiao Zhang, Lin S. Chen<sup>+</sup>, Jin Liu<sup>+</sup>. (2021) Mendelian randomization informs shared genetic
 etiology underlying exposure and outcome by
 interrogating correlated horizontal pleiotropy.
 
