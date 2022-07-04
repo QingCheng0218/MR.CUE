@@ -243,7 +243,7 @@ ReadSummaryStat <- function(fileexp, fileout, filepan, snpinfo, pva_cutoff, lamb
       ResF4Gammah = ResF4Gamma,
       ResF4se2 = ResF4Gammase,
       ResF4SNPchr = ResF4SNPchr,
-      F4Rblock = ResF4R,
+      ResF4Rblock = ResF4R,
       arma_blc_id = Res_id
     )
   )

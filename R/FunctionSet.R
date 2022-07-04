@@ -28,7 +28,7 @@ genRawGeno <- function(maf, L, M, rho, n){
 }
 
 
-genSumStat <- function(x12, n1, n2, M, L, rho_ag, Alrate, h2a, h2t, h2g){
+genSumStat <- function(x12, n1, n2, M, L, b1, rho_ag, Alrate, h2a, h2t, h2g){
   
   p = M*L;
   block_inf <- cbind(seq(1, p, M), seq(M, p, M));
@@ -61,11 +61,11 @@ genSumStat <- function(x12, n1, n2, M, L, rho_ag, Alrate, h2a, h2t, h2g){
   
   x12g = x12%*%gamma;
   
-  var1 = (h2g*b0*b0 + h2g)/(b0*b0*(1 - (h2g + h2a + h2t)));
-  var2 = (h2a*b0*b0 + h2a)/(1 - (h2g + h2a + h2t));
-  var3 = (h2t*b0*b0 + h2t)/(1 - (h2g + h2a + h2t));
+  var1 = (h2g*b1*b1 + h2g)/(b1*b1*(1 - (h2g + h2a + h2t)));
+  var2 = (h2a*b1*b1 + h2a)/(1 - (h2g + h2a + h2t));
+  var3 = (h2t*b1*b1 + h2t)/(1 - (h2g + h2a + h2t));
   
-  if(b0!=0){
+  if(b1!=0){
     gamma0 = gamma/sqrt(as.numeric(var(x12g)/var1));
     x12g = x12%*%gamma0;
   }
@@ -129,7 +129,7 @@ genSumStat <- function(x12, n1, n2, M, L, rho_ag, Alrate, h2a, h2t, h2g){
   
   
   resz = ubz + rnorm(n1+n2)*as.numeric(sqrt(1-var(ubz)));
-  zall = b0*yall  + x12a +  x12t + resz;
+  zall = b1*yall  + x12a +  x12t + resz;
   
   
   y = yall[1:n1];
