@@ -82,7 +82,7 @@ if(rho==0.4){
   index = 1:p;
 }
 
-bhat = pvalue = matrix(0, nrow = nrep, ncol = 10);
+bhat = pvalue = matrix(NA, nrow = nrep, ncol = 10);
 
 
 for(irep in 1:nrep){
