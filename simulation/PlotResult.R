@@ -26,13 +26,13 @@ Fig2b_MultiUTypeIE = TypeIfun4main(TypeIE4MultipleU, color, alvalue = 0.7, MethO
 Fig2d_MultiUpower = powerplotfun(Power4MultipleU, color, MethOrder, MethOrderlabel);
 
 # ====================================== #
-# Figure 2f and 2e for Negative Controls and Positive Controls (with existing methods).
+# Figure 2e and 2f for Negative Controls and Positive Controls (with existing methods).
 # ====================================== #
-Fig2f_PosCon4Meth10 = Posfigurefun(PosMeth105e4, color);
 Fig2e_NegCon4Meth10 = Negfigurefun(NegMeth105e4, color);
+Fig2f_PosCon4Meth10 = Posfigurefun(PosMeth105e4, color);
 
 # ====================================== #
-# Figure 2g for Negative Controls and Positive Controls (with MR-CUE-Indep).
+# Figure 2g for Positive Controls (with MR-CUE-Indep).
 # ====================================== #
 Fig2g_PosCon4CorrIndep = PosfigureCorrIndepfun(Neg4CorrIndep);
 
@@ -47,23 +47,23 @@ Fig2h_RC = RCplotfun(RCres, color);
 # Figure 3 
 # ************************************************************ #
 # ====================================== #
-# Figure 3a for Genetic correlations.
+# Figure 3a (left panel) for Genetic correlations.
 # ====================================== #
 da = load("Figure3results4IL6.Rdata");
 library(reshape2)
-Fig3a_IL6GenCorr = IL6GenCorrfun(lower_tri_IL6GenCorr, lower_pva_IL6GenCorr);
+Fig3aL_IL6GenCorr = IL6GenCorrfun(lower_tri_IL6GenCorr, lower_pva_IL6GenCorr);
 
 # ====================================== #
-# Figure 3b for CHP.
+# Figure 3a (right panel) for CHP.
 # ====================================== #
 library(ComplexHeatmap);
 library(circlize);
-Fig3b_IL6hm = IL6heatmapplotfun(bhat4IL6, pval4IL6, PvaMatfix4IL6, chridx4IL6);
+Fig3aR_IL6hm = IL6heatmapplotfun(bhat4IL6, pval4IL6, PvaMatfix4IL6, chridx4IL6);
 
 # ====================================== #
-# Figure 3c for cis-genes.
+# Figure 3b for cis-genes.
 # ====================================== #
-Fig3c_IL6cisgenes = ILcisgenesplotfun(Chrcisgenes, Pvacisgenes, cisgenes, xcolorcisgenes, 5, 6)
+Fig3b_IL6cisgenes = ILcisgenesplotfun(Chrcisgenes, Pvacisgenes, cisgenes, xcolorcisgenes, 5, 6)
 
 # ************************************************************ #
 # Figure 4 

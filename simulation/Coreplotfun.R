@@ -193,7 +193,7 @@ Negfigurefun <- function(dat, color){
 PosfigureCorrIndepfun <- function(dat){
   
   fillshape = c(17, 2, 19, 13, 15, 7,18,5, 20, 10);
-  color2 = c( "#d81f2a","#1B2431", "#FE46A5","#048243", "#FDB0C0",
+  color = c( "#d81f2a","#1B2431", "#FE46A5","#048243", "#FDB0C0",
               "#0E87CC","#D46A7E", "#13BBAF","#FDB915", "#214761");
   label = c(bquote(bold(MR~"-"~CUE)~"("~5*x*10^{-4}~")"),bquote(bold(MR~"-"~CUE~"-"~Indep)~"("~5*x*10^{-4}~")"),
             bquote(bold(MR~"-"~CUE)~"("~10^{-4}~")"), bquote(bold(MR~"-"~CUE~"-"~Indep)~"("~10^{-4}~")"),
