@@ -37,3 +37,4 @@ Development
 ===========
   
   This package is developed and maintained by Qing Cheng (qingcheng0218@gmail.com). 
+  Cite the code:[![DOI](https://zenodo.org/badge/509940910.svg)](https://zenodo.org/badge/latestdoi/509940910)
