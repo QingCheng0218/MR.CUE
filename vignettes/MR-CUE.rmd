@@ -138,7 +138,7 @@ resMRCUE = MRCUEIndep(gammah, Gammah, se1, se2, rho = 0)
 # Fit MR-CUE using BMI-T2D study.
 We give an example to illustrate the implements of MR-CUE for real data analysis. For Body Mass Index (BMI), we use summary statistics on chromosome 1,  chromosome 2 and  chromosome 3 from Locke et al. (2015)[PMID:25673413].
 For Type 2 Diabetes (T2D) we use summary statistics on  chromosome 1,  chromosome 2 and  chromosome 3 from Mahajan et al. (2018)[PMID:30297969].
-The following datasets(`BMICHR1CHR2CHR3.txt`, `T2DCHR1CHR2CHR3.txt`, `UK10KCHR1LDhm3.RDS`, `UK10KCHR2LDhm3.RDS`, `UK10KCHR3LDhm3.RDS`, `UK10Ksnpinforhm3.RDS`) should be prepared, you can download here (https://drive.google.com/drive/folders/1eeXxxp2H4Nv9EJJNUh9_l22-zOYgEvl3?usp=sharing). All coordinates were relative to the hg19 version of the human genome.
+The following datasets(`BMICHR1CHR2CHR3.txt`, `T2DCHR1CHR2CHR3.txt`, `UK10KCHR1LDhm3.RDS`, `UK10KCHR2LDhm3.RDS`, `UK10KCHR3LDhm3.RDS`, `UK10Ksnpinforhm3.RDS`) should be prepared, you can download here: https://zenodo.org/record/7152063. All coordinates were relative to the hg19 version of the human genome.
 
 
 ```{r}
