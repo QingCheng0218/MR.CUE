@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Cheng"
+  given-names: "Qing"
+- family-names: "Zhang"
+  given-names: "Xiao"
+- family-names: "Chen"
+  given-names: "Lin"
+- family-names: "Liu"
+  given-names: "Jin"
+  
+title: "Mendelian randomization informs shared genetic etiology underlying exposure and outcome by interrogating correlated horizontal pleiotropy"
+version: 1.0
+doi: 10.5281/zenodo.7134872
+date-released: 2022-10-02
+url: "https://github.com/QingCheng0218/MR.CUE"
