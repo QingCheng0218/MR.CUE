@@ -342,9 +342,9 @@ EstRho <- function(fileexp, fileout, filepan, snpinfo, ld_r2_thresh, lambad, pth
     dapan = dapan[dapan$SNP1 %in% daout_k$SNP,]
     dapan = dapan[dapan$SNP2 %in% daout_k$SNP,]
     
-    snp = union(dapan$SNP1, dapan$SNP2)
-    daexp_k = daexp_k[daexp_k$SNP %in% snp, ]
-    daout_k = daout_k[daexp_k$SNP,]
+    # snp = union(dapan$SNP1, dapan$SNP2)
+    # daexp_k = daexp_k[daexp_k$SNP %in% snp, ]
+    # daout_k = daout_k[daexp_k$SNP,]
     
     snppan = union(dapan$SNP1, dapan$SNP2)
     if(length(snppan)!=length(snpint)){
@@ -353,6 +353,11 @@ EstRho <- function(fileexp, fileout, filepan, snpinfo, ld_r2_thresh, lambad, pth
       colnames(Sigpan) = colnames(dapan)
       dapan = rbind(dapan, Sigpan)
     }
+    
+    # move row 345-347 to here, as dapan may expand in line 349-355, ZX
+    snp = union(dapan$SNP1, dapan$SNP2)
+    daexp_k = daexp_k[daexp_k$SNP %in% snp, ]
+    daout_k = daout_k[daexp_k$SNP,]
     
     
     arma_blc_id = unique(dapan$BlockID)
@@ -430,8 +435,13 @@ EstRho <- function(fileexp, fileout, filepan, snpinfo, ld_r2_thresh, lambad, pth
     Rhores = rep(NA, nsave);
     a = rep(-pth, 2);
     b = rep(pth, 2);
+    # z1_new may has length 0, ZX
     z1_new = z1_ind [which(abs(z1_ind) < pth&abs(z2_ind) < pth)];
     z2_new = z2_ind[which(abs(z1_ind) < pth&abs(z2_ind) < pth)];
+    # ZX
+    if (length(z1_new) == 0) {
+      stop("No significant SNPs were found and the program terminated.")
+    }
     rhores = truncEstfun(a, b, z1_new, z2_new, maxIter, burnin, thin)
     rhohat = mean(rhores);
     p1 = length(z1_new);
@@ -448,6 +458,11 @@ EstRho <- function(fileexp, fileout, filepan, snpinfo, ld_r2_thresh, lambad, pth
       b = rep(pth1, 2);
       z1_new = z1_ind [which(abs(z1_ind) < pth1&abs(z2_ind) < pth1)];
       z2_new = z2_ind[which(abs(z1_ind) < pth1&abs(z2_ind) < pth1)];
+      # ZX
+      if (length(z1_new) == 0) {
+        warning(paste0("No significant SNPs were found with pth = ", pth, " and the program skip it."))
+        next
+      }
       rhores = truncEstfun(a, b, z1_new, z2_new, 4000, 1000, 10)
       rhohat[i] = mean(rhores);
       p1 = length(z1_new);
