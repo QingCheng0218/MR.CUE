@@ -1,0 +1,14 @@
+Package: MR.CUE
+Type: Package
+Title: What the package does (short line)
+Version: 1.0
+Date: 2023-10-21
+Author: Who wrote it
+Maintainer: Who to complain to
+ <yourfault@somewhere.net>
+Description: More about what it does (maybe more
+     than one line)
+License: What license is it under?
+Imports: Rcpp (>= 1.0.9)
+LinkingTo: Rcpp, RcppArmadillo, BH, RcppDist
+Built: R 4.1.0; x86_64-apple-darwin17.0; 2023-10-21 13:28:17 UTC; unix

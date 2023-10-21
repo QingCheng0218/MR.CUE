@@ -1,0 +1,146 @@
+* using log directory ‘/Users/qingcheng/NutstoreFiles/Nutstore/Model4/Rpackage/package/20231021/MR.CUE.Rcheck’
+* using R version 4.1.0 (2021-05-18)
+* using platform: x86_64-apple-darwin17.0 (64-bit)
+* using session charset: UTF-8
+* checking for file ‘MR.CUE/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘MR.CUE’ version ‘1.0’
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... WARNING
+Subdirectory ‘MR.CUE/src’ contains apparent object files/libraries
+  CalCorr.o GibbsGamgamEta_ptr.o MR.CUE.so MRCUE.o RcppExports.o
+  ReadGeneFile.o data_loader.o function.o rcpparma_hello_world.o
+  truncatedNormal.o
+Object files/libraries should not be included in a source package.
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... NOTE
+Found the following hidden files and directories:
+  .DS_Store
+  R/.DS_Store
+These were most likely included in error. See section ‘Package
+structure’ in the ‘Writing R Extensions’ manual.
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘MR.CUE’ can be installed ... WARNING
+Found the following significant warnings:
+  Warning: /Users/qingcheng/NutstoreFiles/Nutstore/Model4/Rpackage/package/20231021/MR.CUE/man/MR.CUE-package.Rd:27: All text must be in a section
+  Warning: /Users/qingcheng/NutstoreFiles/Nutstore/Model4/Rpackage/package/20231021/MR.CUE/man/MR.CUE-package.Rd:28: All text must be in a section
+See ‘/Users/qingcheng/NutstoreFiles/Nutstore/Model4/Rpackage/package/20231021/MR.CUE.Rcheck/00install.out’ for details.
+* checking installed package size ... OK
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... NOTE
+Malformed Description field: should contain one or more complete sentences.
+非标准执照规格
+  What license is it under?
+Standardizable: FALSE
+Checking should be performed on sources prepared by ‘R CMD build’.
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking R files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking dependencies in R code ... OK
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+EstRho: no visible global function definition for ‘read.table’
+EstRhofun: no visible binding for global variable ‘block_file’
+ReadSummaryStat: no visible global function definition for
+  ‘read.table’
+RemoveMHCCfun: no visible binding for global variable ‘idx4panel’
+RemoveMHCCfun: no visible binding for global variable
+  ‘avbIndexRmhc_x’
+RemoveMHCCfun: no visible binding for global variable
+  ‘idx4panelRmhc_x’
+RemoveMHCCfun: no visible binding for global variable
+  ‘avbIndexRmhc_xy’
+genRawGeno: no visible global function definition for ‘rmvnorm’
+genRawGeno: no visible global function definition for ‘qnorm’
+genSumStat: no visible global function definition for ‘rnorm’
+genSumStat: no visible global function definition for ‘rmvnorm’
+genSumStat: no visible global function definition for ‘var’
+genSumStat: no visible binding for global variable ‘m’
+traceplot: no visible global function definition for ‘ggplot’
+traceplot: no visible global function definition for ‘aes’
+traceplot: no visible global function definition for ‘geom_line’
+traceplot: no visible global function definition for ‘labs’
+traceplot: no visible global function definition for ‘theme’
+traceplot: no visible global function definition for ‘element_text’
+Undefined global functions or variables:
+  aes avbIndexRmhc_x avbIndexRmhc_xy block_file element_text geom_line
+  ggplot idx4panel idx4panelRmhc_x labs m qnorm read.table rmvnorm
+  rnorm theme var
+Consider adding
+  importFrom("stats", "qnorm", "rnorm", "var")
+  importFrom("utils", "read.table")
+to your NAMESPACE file.
+* checking Rd files ... WARNING
+prepare_Rd: MR.CUE-package.Rd:27: All text must be in a section
+prepare_Rd: MR.CUE-package.Rd:28: All text must be in a section
+prepare_Rd: MR.CUE-package.Rd:34-35: Dropping empty section \examples
+* checking Rd metadata ... OK
+* checking Rd cross-references ... WARNING
+Rd xrefs里包含了不知来源的程序包‘<pkg>’
+* checking for missing documentation entries ... WARNING
+未公开的编码对象:
+  ‘Cal_blockR’ ‘Cal_block_Rmatrix’ ‘Cal_block_Rvec’
+  ‘Cal_block_SimR’ ‘Cal_blockinf’ ‘EstRho’ ‘EstRhofun’
+  ‘IndepSummary’ ‘LDclump’ ‘MRCUE’ ‘MRCUEIndep’ ‘MRCUESim’
+  ‘Mat2Vec’ ‘MatSum’ ‘MulticdfNormal’ ‘MultiinverseNormal’
+  ‘ReadSNPinfo’ ‘ReadSummaryStat’ ‘Read_summarystat’
+  ‘RemoveMHCCfun’ ‘Vec2Mat’ ‘cdfNormal’ ‘comb’ ‘fastSigLm’
+  ‘genRawGeno’ ‘genSumStat’ ‘getLineNum’ ‘inverseNormal’
+  ‘load_block_file’ ‘matchscreen’ ‘matchsnp’ ‘mhcend’
+  ‘mhcstart’ ‘multiphi’ ‘normal_pdf’ ‘phi’ ‘select’
+  ‘std_setdiff’ ‘summaryQC’ ‘testR’ ‘test_blocks’ ‘traceplot’
+  ‘truncEstfun’
+All user-level objects in a package should have documentation entries.
+See chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking line endings in C/C++/Fortran sources/headers ... NOTE
+Found the following sources/headers with CR or CRLF line endings:
+  src/GibbsGamgamEta_ptr.cpp
+  src/GibbsGamgamEta_ptr.hpp
+Some Unix compilers require LF line endings.
+* checking line endings in Makefiles ... OK
+* checking compilation flags in Makevars ... OK
+* checking for GNU extensions in Makefiles ... OK
+* checking for portable use of $(BLAS_LIBS) and $(LAPACK_LIBS) ... OK
+* checking use of PKG_*FLAGS in Makefiles ... OK
+* checking compiled code ... WARNING
+File ‘MR.CUE/libs/MR.CUE.so’:
+  Found ‘__ZNSt3__14coutE’, possibly from ‘std::cout’ (C++)
+    Objects: ‘CalCorr.o’, ‘MRCUE.o’, ‘data_loader.o’
+  Found ‘_exit’, possibly from ‘exit’ (C)
+    Object: ‘ReadGeneFile.o’
+  Found ‘_printf’, possibly from ‘printf’ (C)
+    Object: ‘ReadGeneFile.o’
+  Found ‘_puts’, possibly from ‘printf’ (C), ‘puts’ (C)
+    Object: ‘data_loader.o’
+
+Compiled code should not call entry points which might terminate R nor
+write to stdout/stderr instead of to the console, nor use Fortran I/O
+nor system RNGs.
+
+See ‘Writing portable packages’ in the ‘Writing R Extensions’ manual.
+* checking files in ‘vignettes’ ... WARNING
+Files in the 'vignettes' directory but no files in 'inst/doc':
+  ‘MR-CUE.pdf’, ‘MR-CUE.rmd’
+Package has no Sweave vignette sources and no VignetteBuilder field.
+* checking examples ... OK
+* checking PDF version of manual ... OK
+* DONE
+Status: 7 WARNINGs, 4 NOTEs

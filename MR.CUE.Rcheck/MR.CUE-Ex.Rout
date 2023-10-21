@@ -1,0 +1,66 @@
+
+R version 4.1.0 (2021-05-18) -- "Camp Pontanezen"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "MR.CUE"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> library('MR.CUE')
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("rcpparma_hello_world")
+> ### * rcpparma_hello_world
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: RcppArmadillo-Functions
+> ### Title: Set of functions in example RcppArmadillo package
+> ### Aliases: rcpparma_hello_world rcpparma_innerproduct
+> ###   rcpparma_outerproduct rcpparma_bothproducts
+> 
+> ### ** Examples
+> 
+>   x <- sqrt(1:4)
+>   rcpparma_innerproduct(x)
+[1] 10
+>   rcpparma_outerproduct(x)
+         [,1]     [,2]     [,3]     [,4]
+[1,] 1.000000 1.414214 1.732051 2.000000
+[2,] 1.414214 2.000000 2.449490 2.828427
+[3,] 1.732051 2.449490 3.000000 3.464102
+[4,] 2.000000 2.828427 3.464102 4.000000
+> 
+> 
+> 
+> ### * <FOOTER>
+> ###
+> cleanEx()
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  0.126 0.01 0.139 0 0 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

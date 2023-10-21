@@ -1,0 +1,3 @@
+MR.CUE-package          What the package does (short line)
+rcpparma_hello_world    Set of functions in example RcppArmadillo
+                        package

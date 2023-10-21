@@ -1,0 +1,19 @@
+* installing *source* package ‘MR.CUE’ ...
+** using staged installation
+** libs
+make: Nothing to be done for `all'.
+make: `symbols.rds' is up to date.
+installing to /Users/qingcheng/NutstoreFiles/Nutstore/Model4/Rpackage/package/20231021/MR.CUE.Rcheck/00LOCK-MR.CUE/00new/MR.CUE/libs
+** R
+** byte-compile and prepare package for lazy loading
+** help
+Warning: /Users/qingcheng/NutstoreFiles/Nutstore/Model4/Rpackage/package/20231021/MR.CUE/man/MR.CUE-package.Rd:27: All text must be in a section
+Warning: /Users/qingcheng/NutstoreFiles/Nutstore/Model4/Rpackage/package/20231021/MR.CUE/man/MR.CUE-package.Rd:28: All text must be in a section
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (MR.CUE)
