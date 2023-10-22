@@ -123,13 +123,11 @@ ReadSummaryStat <- function(fileexp, fileout, filepan, snpinfo, pva_cutoff, lamb
   daout = unique(daout)
   
   daexp = daexp[daout$SNP,]
-  daout = daout[daout$a1==daexp$a1,]
-  daexp = daexp[daout$SNP,]
-  
+  # CQ: daout and daexp do not need match the A1 !!!
   # ===================================================== #
   # Remove MHC region.
   QCres = RemoveMHCCfun(mhcstart, mhcend, daexp$beta, daout$beta, daout$beta, daout$se, bp, daout$chr,
-                           daout$SNP,  Inf, Inf)
+                        daout$SNP,  Inf, Inf)
   rsnameRMHC = QCres$rsnamenew
   if(length(rsnameRMHC)!=dim(daout)[1]){
     daexp = daexp[daexp$SNP%in%rsnameRMHC, ];
@@ -152,8 +150,10 @@ ReadSummaryStat <- function(fileexp, fileout, filepan, snpinfo, pva_cutoff, lamb
   ResF4SNPchr  = vector("list", 0)
   ResF4R       = vector("list", 0)
   Res_id  = c()
+  # CQ: In case that not all 22 chromosomes are included.
+  comchrs = sort(unique(daexp$chr));
   
-  for (chrk in 1:22) {
+  for (chrk in comchrs) {
     if (is.null(filepan[[chrk]])) next
     if (!file.exists(filepan[[chrk]])) next
     dapan = readRDS(filepan[[chrk]])
@@ -167,20 +167,31 @@ ReadSummaryStat <- function(fileexp, fileout, filepan, snpinfo, pva_cutoff, lamb
     stopifnot(sum(RefSNP_k$SNP%in%snpint)==length(snpint))
     # ===================================================== #
     
-    
-    
     dapan = dapan[dapan$SNP1 %in% daout_k$SNP,]
     dapan = dapan[dapan$SNP2 %in% daout_k$SNP,]
-    daexp_k = daexp_k[daexp_k$SNP %in% snpint, ]
-    daout_k = daout_k[daexp_k$SNP,]
     snppan = union(dapan$SNP1, dapan$SNP2)
     
     if(length(snppan)!=length(snpint)){
+      # CQ: In case that each block just has one snp.
       sigleSNP = snpint[!snpint%in%snppan];
-      Sigpan = data.frame(rep(chrk, length(sigleSNP)),paste0(chrk*10, max(dapan$BlockID)+seq(1:length(sigleSNP))), sigleSNP, sigleSNP, rep(1, length(sigleSNP)))
-      colnames(Sigpan) = colnames(dapan)
-      dapan = rbind(dapan, Sigpan)
+      if(length(snppan)!=0){
+        Sigpan = data.frame(rep(chrk, length(sigleSNP)),paste0(chrk*10, max(dapan$BlockID)+seq(1:length(sigleSNP))), sigleSNP, sigleSNP, rep(1, length(sigleSNP)))
+        colnames(Sigpan) = colnames(dapan)
+        dapan = rbind(dapan, Sigpan)
+      }else{
+        Sigpan = data.frame(rep(chrk, length(sigleSNP)),paste0(chrk*10, seq(1:length(sigleSNP))), sigleSNP, sigleSNP, rep(1, length(sigleSNP)))
+        colnames(Sigpan) = colnames(dapan);
+        dapan = rbind(dapan, Sigpan);
+      }
+      
     }
+    
+    if(nrow(dapan)==0) next
+    
+    # move row 345-347 to here, as dapan may expand in line 349-355, ZX
+    snp = union(dapan$SNP1, dapan$SNP2)
+    daexp_k = daexp_k[daexp_k$SNP %in% snp, ]
+    daout_k = daout_k[daexp_k$SNP,]
     
     
     arma_blc_id = unique(dapan$BlockID)
@@ -284,8 +295,6 @@ EstRho <- function(fileexp, fileout, filepan, snpinfo, ld_r2_thresh, lambad, pth
   daout = daout[!is.na(daout$chr),]
   
   daexp = daexp[daout$SNP,]
-  daout = daout[daout$a1==daexp$a1,]
-  daexp = daexp[daout$SNP,]
   # ===================================================== #
   # Remove MHC region.
   QCres = RemoveMHCCfun(mhcstart, mhcend, daexp$beta, daout$beta, daexp$se, daout$se, bp, daout$chr,
@@ -323,8 +332,8 @@ EstRho <- function(fileexp, fileout, filepan, snpinfo, ld_r2_thresh, lambad, pth
   # ResF4SNPchr  = vector("list", 0)
   # ResF4R       = vector("list", 0)
   # Res_id  = c()
-  
-  for (chrk in 1:22) {
+  comchrs = sort(unique(daexp$chr));
+  for (chrk in comchrs) {
     if (is.null(filepan[[chrk]])) next
     if (!file.exists(filepan[[chrk]])) next
     dapan = readRDS(filepan[[chrk]])
@@ -347,11 +356,20 @@ EstRho <- function(fileexp, fileout, filepan, snpinfo, ld_r2_thresh, lambad, pth
     # daout_k = daout_k[daexp_k$SNP,]
     
     snppan = union(dapan$SNP1, dapan$SNP2)
+    
     if(length(snppan)!=length(snpint)){
+      # In case that each block just has one snp.
       sigleSNP = snpint[!snpint%in%snppan];
-      Sigpan = data.frame(rep(chrk, length(sigleSNP)),paste0(chrk*10, max(dapan$BlockID)+seq(1:length(sigleSNP))), sigleSNP, sigleSNP, rep(1, length(sigleSNP)))
-      colnames(Sigpan) = colnames(dapan)
-      dapan = rbind(dapan, Sigpan)
+      if(length(snppan)!=0){
+        Sigpan = data.frame(rep(chrk, length(sigleSNP)),paste0(chrk*10, max(dapan$BlockID)+seq(1:length(sigleSNP))), sigleSNP, sigleSNP, rep(1, length(sigleSNP)))
+        colnames(Sigpan) = colnames(dapan)
+        dapan = rbind(dapan, Sigpan)
+      }else{
+        Sigpan = data.frame(rep(chrk, length(sigleSNP)),paste0(chrk*10, seq(1:length(sigleSNP))), sigleSNP, sigleSNP, rep(1, length(sigleSNP)))
+        colnames(Sigpan) = colnames(dapan);
+        dapan = rbind(dapan, Sigpan);
+      }
+      
     }
     
     # move row 345-347 to here, as dapan may expand in line 349-355, ZX
