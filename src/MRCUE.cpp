@@ -33,6 +33,7 @@ ObjGibbs3 M3indepPXGibbsObj(arma::vec &gammah, arma::vec &Gammah, arma::vec &se1
   double btau1 = opts -> btau2;
   double a = opts -> a;
   double b = opts -> b;
+  string CluDes = opts -> CluDes;
   uword maxIter = opts -> maxIter;
   uword thin = opts -> thin;
   uword burnin = opts -> burnin;
@@ -259,17 +260,33 @@ ObjGibbs3 M3indepPXGibbsObj(arma::vec &gammah, arma::vec &Gammah, arma::vec &se1
   }
  
   // The identification of beta1
-  if(mean(Tau02Res) > mean(Tau12Res)){
-    vec breplace = Beta0res;
-    Beta0res = Beta1res;
-    Beta1res = breplace;
-    breplace = Tau02Res;
-    Tau02Res = Tau12Res;
-    Tau12Res = Tau02Res;
-    Etarate = 1 - Etarate;
-    EtaIterRate = 1 - EtaIterRate;
-    WRes = 1 - WRes;
+  if(CluDes=="PropMajor"){
+    uvec eta1 = find(Etarate>0.8);
+    if(eta1.n_elem > 0.6*p){
+      vec breplace = Beta0res;
+      Beta0res = Beta1res;
+      Beta1res = breplace;
+      breplace = Tau02Res;
+      Tau02Res = Tau12Res;
+      Tau12Res = Tau02Res;
+      Etarate = 1 - Etarate;
+      EtaIterRate = 1 - EtaIterRate;
+      WRes = 1 - WRes;
+    }
+  }else if(CluDes=="VarMajor"){
+    if(mean(Tau02Res) > mean(Tau12Res)){
+      vec breplace = Beta0res;
+      Beta0res = Beta1res;
+      Beta1res = breplace;
+      breplace = Tau02Res;
+      Tau02Res = Tau12Res;
+      Tau12Res = Tau02Res;
+      Etarate = 1 - Etarate;
+      EtaIterRate = 1 - EtaIterRate;
+      WRes = 1 - WRes;
+    }
   }
+
   
   
   ObjGibbs3 obj;
@@ -295,23 +312,23 @@ List MRCUEIndep(arma::vec &gammah, arma::vec &Gammah, arma::vec &se1, arma::vec 
 {
   Options_Gibbs3* lp_opt = NULL;
   uword nblocks = gammah.n_elem;
-  
+
   if (!Rf_isNull(opts)){
     Rcpp::List opt(opts);
-    lp_opt = new Options_Gibbs3(opt["agm"], opt["bgm"], opt["atau1"], opt["btau1"], 
-                                opt["atau2"], opt["btau2"], opt["a"], opt["b"], 
-                                    opt["maxIter"], opt["thin"], opt["burnin"]);
+    lp_opt = new Options_Gibbs3(opt["agm"], opt["bgm"], opt["atau1"], opt["btau1"],
+                                opt["atau2"], opt["btau2"], opt["a"], opt["b"],
+                                opt["CluDes"], opt["maxIter"], opt["thin"], opt["burnin"]);
   }
   if (Rf_isNull(opts)){
     lp_opt = new Options_Gibbs3(nblocks);
   }
-  
+
   ObjGibbs3 obj = M3indepPXGibbsObj(gammah, Gammah, se1, se2, rho, lp_opt);
-  
+
   double bhat = mean(obj.Beta0res);
   double se = stddev(obj.Beta0res);
   double pvalue = 2*(R::pnorm(abs(bhat / se), 0, 1, 0, 0));
-  
+
   List output = List::create(
     Rcpp::Named("beta.hat") = bhat,
     Rcpp::Named("beta.se") = se,
@@ -325,7 +342,7 @@ List MRCUEIndep(arma::vec &gammah, arma::vec &Gammah, arma::vec &se1, arma::vec 
     Rcpp::Named("Sgga2Res") = Rcpp::wrap(obj.Sgga2Res),
     Rcpp::Named("Tau12Res") = Rcpp::wrap(obj.Tau02Res), // change notation.
     Rcpp::Named("Tau22Res") = Rcpp::wrap(obj.Tau12Res)  // change notation.
-    
+
   );
   return output;
 }
@@ -333,7 +350,7 @@ List MRCUEIndep(arma::vec &gammah, arma::vec &Gammah, arma::vec &se1, arma::vec 
 
 ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gammah,
                                   arma::field<vec> F4se1, arma::field<vec> F4se2,
-                                  arma::field<mat> F4Rblock, double rho,  int coreNum, 
+                                  arma::field<mat> F4Rblock, double rho,  int coreNum,
                                   Options_Gibbs3* opts){
   // ----------------------------------------------------------------------
   // check number of input arguments
@@ -345,10 +362,11 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
   double btau1 = opts -> btau2;
   double a = opts -> a;
   double b = opts -> b;
+  string CluDes = opts -> CluDes;
   uword maxIter = opts -> maxIter;
   uword thin = opts -> thin;
   uword burnin = opts -> burnin;
-  
+
   // ----------------------------------------------------------------------
   // initial values
   uword nblocks = F4Rblock.size();
@@ -357,51 +375,51 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
     NB[nn] = F4gammah(nn, 0).size();
   }
   int p = sum(NB);
-  
+
   double sgga2 = 0.01;
   double beta0 = 0.01; double beta1 = 0.01; double w = 0.1;
-  
+
   double tau12 = 0.01;
   double tau02 = 0.01;
   double xi2 = 0.01;
-  
+
   double tau02xi2 = tau02*xi2;
-  
+
   int numsave = maxIter / thin;
   vec Beta0res = ones(numsave, 1);
   vec Beta1res = ones(numsave, 1);
   vec Sgga2Res = ones(numsave, 1);
   vec Tau02Res = ones(numsave, 1);
   vec Tau12Res = ones(numsave, 1);
-  
-  
+
+
   vec mu = 0.01*ones(p, 1);
   vec mut = 0.01*ones(p, 1);
-  
-  
+
+
   double inrho2 = 1./(1 - rho*rho);
   double rinrho2 = rho / (1 - rho*rho);
-  
-  
-  
+
+
+
   ivec Eta = zeros<ivec>(nblocks, 1);
   vec Etarate = zeros(nblocks, 1);
-  
-  
+
+
   vec EtaIterRate = zeros(nblocks, 1);
   vec WRes = ones(numsave, 1);
   imat EtaAll = ones<imat>(nblocks, numsave);
-  
-  
+
+
   field<vec> F4mu(nblocks, 1), F4mut(nblocks, 1), F4rRinsGmut(nblocks, 1), F4rRinsgmu(nblocks, 1);
   field<vec> F4rGinvsG2(nblocks, 1), F4rginvsg2(nblocks, 1), F4rginvse12(nblocks, 1), F4rGinvse12(nblocks, 1);
   field<mat> F4rinsgRinsG(nblocks, 1), F4rRins(nblocks, 1), F4rRins2(nblocks, 1);
   field<vec> F4rDinsGRinsG(nblocks, 1), F4rDinsgRinsg(nblocks, 1);
-  
-  
-  
+
+
+
   for (int nn = 0; nn < (int)(nblocks); nn = nn+1){
-    
+
     F4mu(nn, 0) = 0.01*ones(NB[nn], 1);
     F4mut(nn, 0) = 0.01*ones(NB[nn], 1);
     vec se1_block = F4se1(nn, 0);
@@ -410,11 +428,11 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
     vec sG2_block = pow(se2_block, 2);
     vec bh1_block = F4gammah(nn, 0);
     vec bh2_block = F4Gammah(nn, 0);
-    
+
     mat R_block =  symmatu(F4Rblock(nn, 0));
     F4rGinvsG2(nn, 0) = inrho2*bh2_block / sG2_block;
     F4rginvsg2(nn, 0) = inrho2*bh1_block / sg2_block;
-    
+
     F4rginvse12(nn, 0) = rinrho2*bh1_block / (se1_block % se2_block);
     F4rGinvse12(nn, 0) = rinrho2*bh2_block / (se1_block % se2_block);
     F4rDinsGRinsG(nn, 0) = inrho2*diagvec(R_block) / sG2_block;
@@ -424,11 +442,11 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
     F4rRinsGmut(nn, 0) = inrho2*R_block*diagmat(1 / se2_block)*F4mut(nn, 0);
     F4rRinsgmu(nn, 0) = inrho2*R_block*diagmat(1 / se1_block)*F4mu(nn, 0);
   }
-  
-  
+
+
   int num = 0;
   for(int iter = 0; iter < (int_fast32_t)(maxIter + burnin); iter ++){
-    
+
     double invtau02xi2 = 1. / (tau02xi2);
     double invtau12 = 1. / tau12;
     double logW = log(w / (1 - w));
@@ -437,10 +455,10 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
     vec mumut4bE0 = zeros(nblocks, 1);
     vec mumut4bE1 = zeros(nblocks, 1);
     vec Mu2 = zeros(nblocks, 1);
-    
+
     vec Eta0sum = zeros(nblocks, 1);
     vec Eta1sum = zeros(nblocks, 1);
-    
+
     // ------------------------------------------------------------------
     // set parallel computation for Gamma, gamma, eta;
     paraBlock_GamgamEta parobj_GamgamEta(nblocks, F4se1, F4se2, F4mu, F4mut,
@@ -449,26 +467,26 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
                                          F4rRins,F4rRins2, mu24bE0, mu24bE1, mumut4bE0, mumut4bE1,
                                          Mu2, Eta, Eta0sum, Eta1sum,
                                          rho, beta0, beta1, logW, sgga2, tau12, tau02xi2);
-    
+
     const int n_thread = coreNum;
     // const int n_thread = 1;
     std::vector<std::thread> threads(n_thread);
     for(int i_thread = 0; i_thread < n_thread; i_thread++){
       threads[i_thread] = std::thread(&paraBlock_GamgamEta::update_by_thread_GamgamEta, &parobj_GamgamEta, i_thread);
     }
-    
-    
+
+
     for(int i = 0; i < n_thread; i++){
       threads[i].join();
     }
-    
+
     // save the parallel result
     mu24bE0 = parobj_GamgamEta.mu24bE0;
     mu24bE1 = parobj_GamgamEta.mu24bE1;
     mumut4bE0 = parobj_GamgamEta.mumut4bE0;
     mumut4bE1 = parobj_GamgamEta.mumut4bE1;
     Mu2 = parobj_GamgamEta.Mu2;
-    
+
     Eta0sum = parobj_GamgamEta.Eta0sum;
     Eta1sum = parobj_GamgamEta.Eta1sum;
     Eta = parobj_GamgamEta.Eta;
@@ -477,9 +495,9 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
     F4mut = parobj_GamgamEta.F4mut;
     F4rRinsGmut = parobj_GamgamEta.F4rRinsGmut;
     F4rRinsgmu = parobj_GamgamEta.F4rRinsgmu;
-    
+
     // ------------------------------------------------------------------
-    
+
     // ------------------------------
     // Update beta0 beta1;
     // ------------------------------
@@ -488,19 +506,19 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
     sig2b1 = 1. / (invtau12 * sum(mu24bE1));
     mub0 = sig2b0 * (invtau02xi2 * sum(mumut4bE0));
     mub1 = sig2b1 * (invtau12 * sum(mumut4bE1));
-    
+
     if(sum(Eta)==(int_fast32_t)nblocks){
       beta0 = 0;
     }else{
       beta0 = mub0 + randn()*sqrt(sig2b0); // beta0 = mub0;
     }
-    
+
     if(sum(Eta)==0){
       beta1 = 0;
     }else{
       beta1 = mub1 + randn()*sqrt(sig2b1); // beta1 = mub1;
     }
-    
+
     // ------------------------------
     // Update sgga2, tau02, tau12, xi2;
     // ------------------------------
@@ -508,30 +526,30 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
     tagm = agm + p / 2;
     tbgm = sum(Mu2) / 2 + bgm;
     sgga2 =  1 / randg<double>(distr_param(tagm, 1/tbgm)); // sgga2 = tbgm;
-    
-    
+
+
     vec tmp4tau02 = zeros(nblocks, 1);
     vec tmp4tau12 = zeros(nblocks, 1);
-    
+
     for(int l = 0; l < (int_fast32_t)nblocks; l++){
       tmp4tau02[l] = (1 - Eta[l])*sum((F4mut(l, 0) - beta0*F4mu(l, 0))%(F4mut(l, 0) - beta0*F4mu(l, 0)));
       tmp4tau12[l] = Eta[l]*sum((F4mut(l, 0) - beta1*F4mu(l, 0))%(F4mut(l, 0) - beta1*F4mu(l, 0)));
     }
-    
+
     tatau0 = atau0 + 0.5*sum(Eta0sum);
     tbtau0 = btau0 + 0.5*sum(tmp4tau02) / xi2;
-    
+
     if(sum(Eta)!=(int_fast32_t)nblocks && tbtau0!=0 && tatau0!=0){
       tau02 =  1 / randg<double>(distr_param(tatau0, 1/tbtau0)); // tau02 = tbtau0;
     }
-    
+
     tatau1 = atau1 + 0.5*sum(Eta1sum);
     tbtau1 = btau1 + 0.5*sum(tmp4tau12);
-    
+
     if(sum(Eta)!=0 && tbtau1!=0 && tatau1!=0){
       tau12 =  1 / randg<double>(distr_param(tatau1, 1/tbtau1)); // tau12 = tbtau1;
     }
-    
+
     // ------------------------------
     // Update xi2;
     // ------------------------------
@@ -540,8 +558,8 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
     if(taxi2!=0 && tbxi2!=0){
       xi2 =  1 / randg<double>(distr_param(taxi2, 1/tbxi2)); // xi2 = tbxi2;
     }
-    
-    
+
+
     tau02xi2 = tau02*xi2;
     if(tau02xi2 < 1e-7){
       tau02xi2 = 1e-7;
@@ -549,12 +567,12 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
     // ------------------------------
     // update omega
     // ------------------------------
-    
+
     double wpa1, wpa2;
     wpa1 = a + sum(Eta);
     wpa2 = b + Eta.n_elem - sum(Eta);
     w = R::rbeta(wpa1, wpa2); // w = 0.1;
-    
+
     if(iter >= (int)burnin){
       if((iter - burnin) % thin ==0){
         // Etarate = (Etarate*num + temp)/(num + 1);
@@ -569,26 +587,42 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
       }
     }
   }
-  
+
   for(int i = 0; i < (int_fast32_t)EtaAll.n_rows; i++){
     EtaIterRate[i] = (double)sum(EtaAll.row(i))/(double)EtaAll.n_cols;
   }
-  
 
-  // The identification of beta1
-  if(mean(Tau02Res) > mean(Tau12Res)){
-    vec breplace = Beta0res;
-    Beta0res = Beta1res;
-    Beta1res = breplace;
-    breplace = Tau02Res;
-    Tau02Res = Tau12Res;
-    Tau12Res = Tau02Res;
-    Etarate = 1 - Etarate;
-    EtaIterRate = 1 - EtaIterRate;
-    WRes = 1 - WRes;
+
+  if(CluDes=="PropMajor"){
+    // The identification of beta1
+    uvec eta1 = find(Etarate>0.8);
+    // Assume CHP is sparse, consider the case where beta0 is mistaken for beta1:
+    if(eta1.n_elem > 0.6*(int_fast32_t)nblocks){
+      vec breplace = Beta0res;
+      Beta0res = Beta1res;
+      Beta1res = breplace;
+      breplace = Tau02Res;
+      Tau02Res = Tau12Res;
+      Tau12Res = Tau02Res;
+      Etarate = 1 - Etarate;
+      EtaIterRate = 1 - EtaIterRate;
+      WRes = 1 - WRes;
+    }
+  }else if(CluDes=="VarMajor"){
+    if(mean(Tau02Res) > mean(Tau12Res)){
+      vec breplace = Beta0res;
+      Beta0res = Beta1res;
+      Beta1res = breplace;
+      breplace = Tau02Res;
+      Tau02Res = Tau12Res;
+      Tau12Res = Tau02Res;
+      Etarate = 1 - Etarate;
+      EtaIterRate = 1 - EtaIterRate;
+      WRes = 1 - WRes;
+    }
   }
 
-  
+
   ObjGibbs3 obj;
   obj.Eta = Eta;
   obj.WRes = WRes;
@@ -599,11 +633,11 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
   obj.Sgga2Res = Sgga2Res;
   obj.Tau02Res = Tau02Res;
   obj.Tau12Res = Tau12Res;
-  
+
   return obj;
-  
-  
-  
+
+
+
 }
 
 
@@ -611,17 +645,17 @@ ObjGibbs3 gibbs3group_blockpar(arma::field<vec> F4gammah, arma::field<vec> F4Gam
 // [[Rcpp::export]]
 Rcpp::List MRCUESim(arma::vec &gammah, arma::vec &Gammah, arma::vec &se1, arma::vec &se2,
                     double rho, arma::mat R, arma::umat block_inf, int coreNum, SEXP opts = R_NilValue){
-  
-  
-  
-  
+
+
+
+
   uword nblocks = block_inf.n_rows;
   field<mat> F4Rblock(nblocks, 1);
   field<vec> F4gammah(nblocks, 1);
   field<vec> F4Gammah(nblocks, 1);
   field<vec> F4se1(nblocks, 1);
   field<vec> F4se2(nblocks, 1);
-  
+
   for(int i=0; i< (int)(nblocks); i++){
     F4Rblock(i, 0) = R.submat(block_inf(i, 0), block_inf(i, 0), block_inf(i, 1), block_inf(i, 1));
     F4gammah(i, 0) = gammah.subvec(block_inf(i, 0), block_inf(i, 1));
@@ -629,25 +663,25 @@ Rcpp::List MRCUESim(arma::vec &gammah, arma::vec &Gammah, arma::vec &se1, arma::
     F4se1(i, 0) = se1.subvec(block_inf(i, 0), block_inf(i, 1));
     F4se2(i, 0) = se2.subvec(block_inf(i, 0), block_inf(i, 1));
   }
-  
-  
+
+
   Options_Gibbs3* lp_opt = NULL;
   if (!Rf_isNull(opts)){
     Rcpp::List opt(opts);
     lp_opt = new Options_Gibbs3(opt["agm"], opt["bgm"], opt["atau1"], opt["btau1"],
                                 opt["atau2"], opt["btau2"], opt["a"], opt["b"],
-                                    opt["maxIter"], opt["thin"], opt["burnin"]);
+                                opt["CluDes"], opt["maxIter"], opt["thin"], opt["burnin"]);
   }
   if (Rf_isNull(opts)){
     lp_opt = new Options_Gibbs3(nblocks);
   }
-  
-  ObjGibbs3 obj = gibbs3group_blockpar(F4gammah, F4Gammah, F4se1, F4se2, F4Rblock, rho, coreNum, 
+
+  ObjGibbs3 obj = gibbs3group_blockpar(F4gammah, F4Gammah, F4se1, F4se2, F4Rblock, rho, coreNum,
                                        lp_opt);
   double bhat = mean(obj.Beta0res);
   double se = stddev(obj.Beta0res);
   double pvalue = 2*(R::pnorm(abs(bhat / se), 0, 1, 0, 0));
-  
+
   List output = List::create(
     Rcpp::Named("beta.hat") = bhat,
     Rcpp::Named("beta.se") = se,
@@ -661,7 +695,7 @@ Rcpp::List MRCUESim(arma::vec &gammah, arma::vec &Gammah, arma::vec &se1, arma::
     Rcpp::Named("Sgga2Res") = Rcpp::wrap(obj.Sgga2Res),
     Rcpp::Named("Tau12Res") = Rcpp::wrap(obj.Tau02Res),
     Rcpp::Named("Tau22Res") = Rcpp::wrap(obj.Tau12Res)
-    
+
   );
   return output;
 }
@@ -669,27 +703,27 @@ Rcpp::List MRCUESim(arma::vec &gammah, arma::vec &Gammah, arma::vec &se1, arma::
 // [[Rcpp::export]]
 Rcpp::List MRCUE(arma::field<vec> F4gammah, arma::field<vec> F4Gammah,
                      arma::field<vec> F4se1, arma::field<vec> F4se2,
-                     arma::field<mat> F4Rblock, double rho, int coreNum, SEXP opts = R_NilValue){  
-  
+                     arma::field<mat> F4Rblock, double rho, int coreNum, SEXP opts = R_NilValue){
+
   uword nblocks = F4Rblock.size();
   Options_Gibbs3* lp_opt = NULL;
   if (!Rf_isNull(opts)){
     Rcpp::List opt(opts);
     lp_opt = new Options_Gibbs3(opt["agm"], opt["bgm"], opt["atau1"], opt["btau1"],
                                 opt["atau2"], opt["btau2"], opt["a"], opt["b"],
-                                    opt["maxIter"], opt["thin"], opt["burnin"]);
+                                opt["CluDes"], opt["maxIter"], opt["thin"], opt["burnin"]);
   }
   if (Rf_isNull(opts)){
     lp_opt = new Options_Gibbs3(nblocks);
   }
-  
-  ObjGibbs3 obj = gibbs3group_blockpar(F4gammah, F4Gammah, F4se1, F4se2, F4Rblock, rho, coreNum, 
+
+  ObjGibbs3 obj = gibbs3group_blockpar(F4gammah, F4Gammah, F4se1, F4se2, F4Rblock, rho, coreNum,
                                           lp_opt);
-  
+
   double bhat = mean(obj.Beta0res);
   double se = stddev(obj.Beta0res);
   double pvalue = 2*(R::pnorm(abs(bhat / se), 0, 1, 0, 0));
-  
+
   List output = List::create(
     Rcpp::Named("beta.hat") = bhat,
     Rcpp::Named("beta.se") = se,
@@ -705,7 +739,7 @@ Rcpp::List MRCUE(arma::field<vec> F4gammah, arma::field<vec> F4Gammah,
     Rcpp::Named("Sgga2Res") = Rcpp::wrap(obj.Sgga2Res),
     Rcpp::Named("Tau12Res") = Rcpp::wrap(obj.Tau02Res),
     Rcpp::Named("Tau22Res") = Rcpp::wrap(obj.Tau12Res)
-    
+
   );
   return output;
 }

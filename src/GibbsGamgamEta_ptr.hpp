@@ -28,13 +28,14 @@ public:
     this -> btau2 = 0;
     this -> a = 2;
     this -> b = nblocks;
+    this -> CluDes = "PropMajor";
     this -> maxIter = 4000;
     this -> thin = 10;
     this -> burnin = 1000;
   }
   
   Options_Gibbs3(double agm, double bgm, double atau1, double btau1,  double atau2, double btau2, 
-                 double a, double b, uword maxIter, uword thin, uword burnin){
+                 double a, double b, string CluDes, uword maxIter, uword thin, uword burnin){
     
     this -> agm = agm;
     this -> bgm = bgm;
@@ -44,12 +45,12 @@ public:
     this -> btau2 = btau2;
     this -> a = a;
     this -> b = b;
+    this -> CluDes = CluDes;
     this -> maxIter = maxIter;
     this -> thin = thin;
     this -> burnin = burnin;
     
   }
-  
   double agm;
   double bgm;
   double atau1;
@@ -58,6 +59,7 @@ public:
   double btau2;
   double a;
   double b;
+  string CluDes;
   uword maxIter;
   uword thin;
   uword burnin;
