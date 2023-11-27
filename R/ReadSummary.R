@@ -215,7 +215,7 @@ ReadSummaryStat <- function(fileexp, fileout, filepan, snpinfo, pva_cutoff, lamb
       # ===================================================== #
       # match Ref panel data.
       da0$beta[da0$a1!=daRef$a1] = -1*da0$beta[da0$a1!=daRef$a1];
-      da1$beta[da0$a1!=daRef$a1] = -1*da1$beta[da0$a1!=daRef$a1];
+      da1$beta[da1$a1!=daRef$a1] = -1*da1$beta[da1$a1!=daRef$a1];
       # ===================================================== #
       
       F4gamma[[k]] = da0$beta
@@ -399,7 +399,7 @@ EstRho <- function(fileexp, fileout, filepan, snpinfo, ld_r2_thresh, lambad, pth
       # ===================================================== #
       # match Ref panel data.
       da0$beta[da0$a1!=daRef$a1] = -1*da0$beta[da0$a1!=daRef$a1];
-      da1$beta[da0$a1!=daRef$a1] = -1*da1$beta[da0$a1!=daRef$a1];
+      da1$beta[da1$a1!=daRef$a1] = -1*da1$beta[da1$a1!=daRef$a1];
       # ===================================================== #
       
       M = diag(rep(1,length(comsnp)))
